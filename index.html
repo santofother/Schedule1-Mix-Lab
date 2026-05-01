@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule I — Mix Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c0e;
+    --surface: #111318;
+    --surface2: #181b22;
+    --surface3: #1e2230;
+    --border: #2a2f3d;
+    --border2: #343b50;
+    --accent: #39ff85;
+    --accent-dim: #1a7a3e;
+    --accent-glow: rgba(57,255,133,0.12);
+    --accent2: #ffe135;
+    --accent2-dim: #7a6a00;
+    --red: #ff4d4d;
+    --red-dim: #7a1a1a;
+    --blue: #4da6ff;
+    --purple: #b16aff;
+    --orange: #ff8c42;
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #555a6b;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Rajdhani', sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ─── Header ─── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: #000;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  .logo-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .status-bar {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ─── Layout ─── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px;
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* ─── Panel ─── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+  }
+
+  .step-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .step-badge.inactive {
+    background: var(--surface3);
+    color: var(--text3);
+    border: 1px solid var(--border2);
+  }
+
+  .panel-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .panel-body {
+    padding: 20px;
+  }
+
+  /* ─── Drug Selector ─── */
+  .drug-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .drug-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .drug-btn:hover {
+    border-color: var(--border2);
+    background: var(--surface3);
+  }
+
+  .drug-btn.active {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .drug-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .drug-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .drug-type {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── Effect Tags ─── */
+  .effects-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .effect-tag {
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.12s;
+    user-select: none;
+    letter-spacing: 0.03em;
+  }
+
+  .effect-tag.neutral {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--text2);
+  }
+
+  .effect-tag.neutral:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .effect-tag.selected-current {
+    background: rgba(77,166,255,0.15);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  .effect-tag.selected-target {
+    background: rgba(57,255,133,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── Legend ─── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid;
+  }
+
+  .legend-dot.current { border-color: var(--blue); background: rgba(77,166,255,0.2); }
+  .legend-dot.target { border-color: var(--accent); background: rgba(57,255,133,0.2); }
+
+  /* ─── Section label ─── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    margin-bottom: 10px;
+    margin-top: 18px;
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+  /* ─── Right panel: Recipe ─── */
+  .recipe-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .recipe-empty {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--text3);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .empty-icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  /* ─── Recipe result ─── */
+  .recipe-card {
+    background: var(--surface);
+    border: 1px solid var(--accent-dim);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .recipe-header {
+    padding: 16px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .recipe-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .recipe-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  .recipe-body {
+    padding: 20px;
+  }
+
+  /* ─── Steps ─── */
+  .mix-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mix-step {
+    display: flex;
+    gap: 16px;
+    position: relative;
+  }
+
+  .mix-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 36px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .step-num.ingredient {
+    background: rgba(57,255,133,0.08);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .step-content {
+    flex: 1;
+    padding-bottom: 20px;
+  }
+
+  .step-action {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    margin-bottom: 4px;
+  }
+
+  .step-item {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .step-item .ing-name {
+    color: var(--accent);
+  }
+
+  .effects-transform {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .eff-chip {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    border: 1px solid;
+  }
+
+  .eff-chip.before {
+    background: rgba(255,77,77,0.08);
+    border-color: var(--red-dim);
+    color: #ff8080;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .eff-chip.after {
+    background: rgba(57,255,133,0.1);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .eff-chip.added {
+    background: rgba(255,225,53,0.08);
+    border-color: var(--accent2-dim);
+    color: var(--accent2);
+  }
+
+  .eff-chip.unchanged {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--text2);
+  }
+
+  .arrow-sym {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  .eff-color-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 1px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Final effects display ─── */
+  .final-effects {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .final-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+  }
+
+  /* ─── No-path warning ─── */
+  .no-path {
+    background: rgba(255,77,77,0.05);
+    border: 1px solid var(--red-dim);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #ff8080;
+    line-height: 1.6;
+  }
+
+  /* ─── Alternatives ─── */
+  .alt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .alt-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .alt-item:hover {
+    border-color: var(--border2);
+    background: var(--surface3);
+  }
+
+  .alt-label {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .alt-steps {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
+  /* ─── Info boxes ─── */
+  .info-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+
+  .info-box span { color: var(--text2); }
+
+  /* ─── Compute button ─── */
+  .compute-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    margin-top: 20px;
+  }
+
+  .compute-btn:hover { background: #5fffaa; }
+  .compute-btn:active { transform: scale(0.99); }
+  .compute-btn:disabled { background: var(--surface3); color: var(--text3); cursor: not-allowed; }
+
+  /* ─── Clear btn ─── */
+  .clear-btn {
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    border-radius: var(--radius);
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .clear-btn:hover { border-color: var(--red-dim); color: #ff8080; }
+
+  /* ─── Scrollable effects area ─── */
+  .effects-scroll {
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .effects-scroll::-webkit-scrollbar { width: 4px; }
+  .effects-scroll::-webkit-scrollbar-track { background: transparent; }
+  .effects-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ─── Divider ─── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 16px 0;
+  }
+
+  /* ─── Multiplier toggle ─── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-top: 12px;
+  }
+
+  .toggle-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .pill-toggle {
+    display: flex;
+    background: var(--surface3);
+    border-radius: 20px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .pill-opt {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--text3);
+    transition: all 0.12s;
+    border: none;
+    background: transparent;
+  }
+
+  .pill-opt.active {
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--border2);
+  }
+
+  /* ─── Value display ─── */
+  .value-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .recipe-body > .value-row:not(:first-child) {
+    margin-top: 14px;
+  }
+
+  .value-card {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    text-align: center;
+  }
+
+  .value-num {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--accent2);
+    font-weight: bold;
+  }
+
+  .value-unit {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">Rx</div>
+    <div>
+      <div class="logo-text">MIX LAB // SCHEDULE I</div>
+      <div class="logo-sub">Effect Calculator & Recipe Generator</div>
+    </div>
+  </div>
+  <div class="status-bar">
+    <span><span class="status-dot"></span>ONLINE</span>
+    <span>v2.4.1</span>
+  </div>
+</header>
+
+<main>
+  <!-- Left column: inputs -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <!-- Step 1: Drug -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="step-badge">1</div>
+        <div class="panel-title">Select Base Product</div>
+      </div>
+      <div class="panel-body">
+        <div class="drug-grid" id="drugGrid"></div>
+      </div>
+    </div>
+
+    <!-- Step 2 + 3: Effects -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="step-badge" id="badge2">2</div>
+        <div class="panel-title">Configure Effects</div>
+        <div style="margin-left:auto;">
+          <button class="clear-btn" onclick="clearEffects()">Clear All</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot current"></div><span>Current effects</span></div>
+          <div class="legend-item"><div class="legend-dot target"></div><span>Target effect</span></div>
+        </div>
+        <div class="section-label">Click once = current effect &nbsp;|&nbsp; Click twice = target &nbsp;|&nbsp; Click three times = off</div>
+        <div class="effects-scroll">
+          <div class="effects-grid" id="effectsGrid"></div>
+        </div>
+
+        <div class="info-box" id="selectionSummary">
+          <span>No effects selected.</span> Tap an effect once to mark it as already on your product, tap again to set it as your target.
+        </div>
+
+        <button class="compute-btn" id="computeBtn" onclick="computeRecipe()" disabled>
+          ⚗ Generate Recipe
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right column: output -->
+  <div class="recipe-panel" id="recipePanel">
+    <div class="recipe-empty" id="emptyState">
+      <div class="empty-icon">🧪</div>
+      <div>Select a product and configure<br>your target effect to generate<br>a mixing recipe.</div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ════════════════════════════════════════
+//  GAME DATA
+// ════════════════════════════════════════
+
+const DRUGS = [
+  { id: "og_kush",    name: "OG Kush",         type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Calming", "Euphoric"] },
+  { id: "sour_diesel",name: "Sour Diesel",     type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Refreshing", "Energizing"] },
+  { id: "green_crack",name: "Green Crack",     type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Energizing"] },
+  { id: "gdp",        name: "Granddaddy Purple",type:"Cannabis",   icon: "🍇", basePrice: 35,  baseEffects: ["Sedating", "Calming"] },
+  { id: "meth",       name: "Methamphetamine", type: "Stimulant",  icon: "💎", basePrice: 70,  baseEffects: ["Energizing", "Focused"] },
+  { id: "cocaine",    name: "Cocaine",         type: "Stimulant",  icon: "🤍", basePrice: 150, baseEffects: ["Athletic", "Energizing"] },
+  { id: "shrooms",    name: "Shrooms",         type: "Psychedelic",icon: "🍄", basePrice: 75,  baseEffects: [] },
+];
+
+// Max simultaneous effects on a product (in-game cap).
+const MAX_EFFECTS = 8;
+
+// Effect → sell-price multiplier (added to 1.0 base).
+// Final price = ceil(basePrice * (1 + sumOfMultipliers))
+const EFFECT_MULTIPLIERS = {
+  "Anti-Gravity":0.54,"Athletic":0.32,"Balding":0.30,"Bright-Eyed":0.40,
+  "Calming":0.10,"Cyclopean":0.56,"Disorienting":0.00,"Electrifying":0.50,
+  "Energizing":0.22,"Euphoric":0.18,"Focused":0.16,"Foggy":0.36,
+  "Gingeritis":0.20,"Glowing":0.48,"Jenkem":0.16,"Laxative":0.00,
+  "Long Faced":0.52,"Munchies":0.12,"Paranoia":0.00,"Refreshing":0.14,
+  "Schizophrenic":0.00,"Sedating":0.26,"Seizure-Inducing":0.00,"Shrinking":0.60,
+  "Slippery":0.34,"Smelly":0.00,"Sneaky":0.24,"Spicy":0.38,
+  "Thought-Provoking":0.44,"Tingly":0.18,"Toxic":0.00,"Tropic Thunder":0.46,
+  "Zombifying":0.58
+};
+
+// All possible effects in the game
+const ALL_EFFECTS = [
+  "Anti-Gravity","Athletic","Balding","Bright-Eyed","Calming","Cyclopean",
+  "Disorienting","Electrifying","Energizing","Euphoric","Focused","Foggy",
+  "Gingeritis","Glowing","Jenkem","Laxative","Long Faced","Munchies",
+  "Paranoia","Refreshing","Schizophrenic","Sedating","Seizure-Inducing","Shrinking","Slippery",
+  "Smelly","Sneaky","Spicy","Thought-Provoking","Tingly","Toxic",
+  "Tropic Thunder","Zombifying"
+];
+
+// Effect color mapping for visual variety
+const EFFECT_COLORS = {
+  "Calming":"#4da6ff","Refreshing":"#4de8ff","Energizing":"#ffe135","Thought-Provoking":"#b16aff",
+  "Balding":"#ff8c42","Gingeritis":"#ff6b35","Toxic":"#7fff00","Glowing":"#fffb00",
+  "Foggy":"#8b90a0","Disorienting":"#ff4da6","Euphoric":"#ff85d1","Paranoia":"#ff4d4d",
+  "Seizure-Inducing":"#ff0040","Shrinking":"#4dffb3","Focused":"#00c8ff","Electrifying":"#ffe135",
+  "Athletic":"#3dff85","Slippery":"#66d9ff","Munchies":"#ff9500","Sedating":"#9b7fff",
+  "Long Faced":"#c0a060","Spicy":"#ff4500","Bright-Eyed":"#00ffcc","Tingly":"#ff85ff",
+  "Tropic Thunder":"#00ff85","Cyclopean":"#ff6600","Zombifying":"#80c040","Sneaky":"#aaaaaa",
+  "Anti-Gravity":"#c080ff","Laxative":"#c8a040","Jenkem":"#8b7355","Smelly":"#99cc00","Schizophrenic":"#ff40a0"
+};
+
+// ════════════════════════════════════════
+//  MIXING DATA
+//  transforms[ingredient][existingEffect] = newEffect
+//  baseEffect = default effect added by ingredient
+// ════════════════════════════════════════
+
+const INGREDIENTS = {
+  "Cuke": {
+    icon: "🥒", cost: 2,
+    baseEffect: "Energizing",
+    transforms: {
+      "Munchies":   "Athletic",
+      "Athletic":   "Sedating",
+      "Slippery":   "Toxic",
+      "Sneaky":     "Anti-Gravity",
+      "Gingeritis": "Thought-Provoking",
+      "Foggy":      "Cyclopean",
+      "Euphoric":   "Laxative",
+      "Toxic":      "Euphoric"
+    }
+  },
+  "Flu Medicine": {
+    icon: "💊", cost: 5,
+    baseEffect: "Sedating",
+    transforms: {
+      "Athletic":    "Munchies",
+      "Munchies":    "Slippery",
+      "Electrifying":"Refreshing",
+      "Cyclopean":   "Foggy",
+      "Focused":     "Euphoric",
+      "Calming":     "Bright-Eyed",
+      "Bright-Eyed": "Paranoia",
+      "Gingeritis":  "Thought-Provoking"
+    }
+  },
+  "Gasoline": {
+    icon: "⛽", cost: 5,
+    baseEffect: "Toxic",
+    transforms: {
+      "Gingeritis":  "Smelly",
+      "Energizing":  "Euphoric",
+      "Sneaky":      "Tropic Thunder",
+      "Sedating":    "Munchies",
+      "Munchies":    "Sedating",
+      "Calming":     "Glowing",
+      "Euphoric":    "Spicy"
+    }
+  },
+  "Donut": {
+    icon: "🍩", cost: 3,
+    baseEffect: "Calming",
+    transforms: {
+      "Energizing":  "Balding",
+      "Balding":     "Sneaky",
+      "Gingeritis":  "Calming",
+      "Toxic":       "Euphoric",
+      "Focused":     "Euphoric",
+      "Athletic":    "Sneaky",
+      "Calming":     "Glowing"
+    }
+  },
+  "Energy Drink": {
+    icon: "🥤", cost: 6,
+    baseEffect: "Athletic",
+    transforms: {
+      "Sedating":    "Munchies",
+      "Spicy":       "Euphoric",
+      "Euphoric":    "Energizing",
+      "Foggy":       "Laxative",
+      "Munchies":    "Tingly",
+      "Disorienting":"Electrifying",
+      "Calming":     "Athletic",
+      "Athletic":    "Euphoric"
+    }
+  },
+  "Mouth Wash": {
+    icon: "🧴", cost: 4,
+    baseEffect: "Balding",
+    transforms: {
+      "Calming":     "Anti-Gravity",
+      "Focused":     "Jenkem",
+      "Energizing":  "Thought-Provoking",
+      "Toxic":       "Sneaky"
+    }
+  },
+  "Motor Oil": {
+    icon: "🛢️", cost: 6,
+    baseEffect: "Slippery",
+    transforms: {
+      "Energizing":  "Munchies",
+      "Euphoric":    "Sedating",
+      "Foggy":       "Toxic",
+      "Paranoia":    "Anti-Gravity",
+      "Gingeritis":  "Smelly"
+    }
+  },
+  "Banana": {
+    icon: "🍌", cost: 2,
+    baseEffect: "Gingeritis",
+    transforms: {
+      "Paranoia":    "Jenkem",
+      "Energizing":  "Thought-Provoking",
+      "Toxic":       "Smelly",
+      "Long Faced":  "Refreshing",
+      "Cyclopean":   "Thought-Provoking",
+      "Disorienting":"Focused",
+      "Smelly":      "Anti-Gravity"
+    }
+  },
+  "Chili": {
+    icon: "🌶️", cost: 7,
+    baseEffect: "Spicy",
+    transforms: {
+      "Athletic":    "Euphoric",
+      "Munchies":    "Toxic",
+      "Anti-Gravity":"Tropic Thunder",
+      "Sneaky":      "Bright-Eyed",
+      "Focused":     "Gingeritis",
+      "Energizing":  "Euphoric"
+    }
+  },
+  "Iodine": {
+    icon: "🧪", cost: 8,
+    baseEffect: "Jenkem",
+    transforms: {
+      "Calming":     "Balding",
+      "Focused":     "Seizure-Inducing",
+      "Euphoric":    "Seizure-Inducing",
+      "Refreshing":  "Thought-Provoking",
+      "Toxic":       "Sneaky"
+    }
+  },
+  "Paracetamol": {
+    icon: "💉", cost: 3,
+    baseEffect: "Sneaky",
+    transforms: {
+      "Munchies":    "Anti-Gravity",
+      "Athletic":    "Glowing",
+      "Electrifying":"Athletic",
+      "Toxic":       "Focused",
+      "Spicy":       "Bright-Eyed",
+      "Energizing":  "Paranoia",
+      "Balding":     "Toxic"
+    }
+  },
+  "Viagra": {
+    icon: "💊", cost: 4,
+    baseEffect: "Tropic Thunder",
+    transforms: {
+      "Athletic":    "Sneaky",
+      "Energizing":  "Bright-Eyed",
+      "Euphoric":    "Bright-Eyed",
+      "Toxic":       "Tropic Thunder"
+    }
+  },
+  "Horse Semen": {
+    icon: "🐴", cost: 9,
+    baseEffect: "Long Faced",
+    transforms: {
+      "Anti-Gravity":"Calming",
+      "Gingeritis":  "Refreshing",
+      "Thought-Provoking":"Electrifying",
+      "Energizing":  "Euphoric",
+      "Seizure-Inducing":"Balding"
+    }
+  },
+  "Mega Bean": {
+    icon: "🫘", cost: 7,
+    baseEffect: "Foggy",
+    transforms: {
+      "Athletic":    "Laxative",
+      "Sneaky":      "Calming",
+      "Calming":     "Glowing",
+      "Thought-Provoking":"Glowing",
+      "Focused":     "Disorienting",
+      "Energizing":  "Cyclopean",
+      "Toxic":       "Paranoia"
+    }
+  },
+  "Addy": {
+    icon: "💊", cost: 9,
+    baseEffect: "Thought-Provoking",
+    transforms: {
+      "Sedating":    "Gingeritis",
+      "Foggy":       "Energizing",
+      "Glowing":     "Refreshing",
+      "Calming":     "Focused",
+      "Munchies":    "Bright-Eyed",
+      "Euphoric":    "Energizing",
+      "Energizing":  "Focused"
+    }
+  },
+  "Battery": {
+    icon: "🔋", cost: 8,
+    baseEffect: "Bright-Eyed",
+    transforms: {
+      "Munchies":    "Electrifying",
+      "Euphoric":    "Zombifying",
+      "Sedating":    "Paranoia",
+      "Cyclopean":   "Glowing",
+      "Shrinking":   "Electrifying",
+      "Focused":     "Shrinking",
+      "Calming":     "Tingly"
+    }
+  }
+};
+
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+let selectedDrug = null;
+let effectState = {}; // effect -> 'current' | 'target' | null
+
+// ════════════════════════════════════════
+//  MIXING ENGINE
+// ════════════════════════════════════════
+
+function applyIngredient(currentEffects, ingredientName) {
+  const ing = INGREDIENTS[ingredientName];
+  if (!ing) return { effects: [...currentEffects], changes: [] };
+
+  // Snapshot-based: read from `before`, write to `next`. This keeps transforms
+  // parallel — A→B and C→B both check the original set, so order doesn't leak in.
+  const before = [...currentEffects];
+  const next = [...currentEffects];
+  const changes = [];
+
+  for (let i = 0; i < before.length; i++) {
+    const target = ing.transforms[before[i]];
+    if (!target) continue;
+    // Suppress if target was already present, or just produced earlier this pass.
+    if (before.includes(target) || next.includes(target)) continue;
+    next[i] = target;
+    changes.push({ from: before[i], to: target, type: 'transform' });
+  }
+
+  // Add base effect, but respect the 8-slot cap — past it, ingredients only transform.
+  if (!next.includes(ing.baseEffect) && next.length < MAX_EFFECTS) {
+    next.push(ing.baseEffect);
+    changes.push({ added: ing.baseEffect, type: 'add' });
+  }
+
+  return { effects: next, changes };
+}
+
+// BFS: find shortest sequence of ingredients to achieve ALL targetEffects
+// starting from currentEffects. Max depth = 6.
+function findRecipe(startEffects, targetEffects, maxDepth = 6) {
+  const ingNames = Object.keys(INGREDIENTS);
+  const hasAll = effs => targetEffects.every(t => effs.includes(t));
+
+  if (hasAll(startEffects)) {
+    return { found: true, steps: [], note: "already_has" };
+  }
+
+  const queue = [{ effects: startEffects, steps: [] }];
+  const visited = new Set([startEffects.slice().sort().join(',')]);
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+    if (node.steps.length >= maxDepth) continue;
+
+    for (const ing of ingNames) {
+      const result = applyIngredient(node.effects, ing);
+      const key = result.effects.slice().sort().join(',');
+
+      if (!visited.has(key)) {
+        visited.add(key);
+        const newSteps = [...node.steps, { ingredient: ing, before: node.effects, after: result.effects, changes: result.changes }];
+
+        if (hasAll(result.effects)) {
+          return { found: true, steps: newSteps };
+        }
+
+        if (newSteps.length < maxDepth) {
+          queue.push({ effects: result.effects, steps: newSteps });
+        }
+      }
+    }
+  }
+
+  return { found: false, steps: [] };
+}
+
+function totalMultiplier(effects) {
+  return effects.reduce((s, e) => s + (EFFECT_MULTIPLIERS[e] || 0), 0);
+}
+
+function sellPrice(basePrice, effects) {
+  return Math.ceil(basePrice * (1 + totalMultiplier(effects)));
+}
+
+function effectColor(eff) {
+  return EFFECT_COLORS[eff] || '#8b90a0';
+}
+
+function effDot(eff) {
+  return `<span class="eff-color-dot" style="background:${effectColor(eff)}"></span>`;
+}
+
+// ════════════════════════════════════════
+//  UI BUILDERS
+// ════════════════════════════════════════
+
+function buildDrugGrid() {
+  const grid = document.getElementById('drugGrid');
+  grid.innerHTML = '';
+  DRUGS.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'drug-btn' + (selectedDrug && selectedDrug.id === d.id ? ' active' : '');
+    btn.innerHTML = `
+      <div class="drug-icon">${d.icon}</div>
+      <div>
+        <div class="drug-name">${d.name}</div>
+        <div class="drug-type">${d.type}</div>
+      </div>
+    `;
+    btn.onclick = () => selectDrug(d);
+    grid.appendChild(btn);
+  });
+}
+
+function buildEffectsGrid() {
+  const grid = document.getElementById('effectsGrid');
+  grid.innerHTML = '';
+  ALL_EFFECTS.forEach(eff => {
+    const tag = document.createElement('div');
+    const state = effectState[eff] || null;
+    let cls = 'effect-tag ';
+    if (state === 'current') cls += 'selected-current';
+    else if (state === 'target') cls += 'selected-target';
+    else cls += 'neutral';
+
+    tag.className = cls;
+    tag.innerHTML = `${effDot(eff)}${eff}`;
+    tag.onclick = () => cycleEffect(eff);
+    grid.appendChild(tag);
+  });
+  updateSummary();
+  updateComputeBtn();
+}
+
+function cycleEffect(eff) {
+  const cur = effectState[eff] || null;
+  if (!cur) {
+    effectState[eff] = 'current';
+  } else if (cur === 'current') {
+    effectState[eff] = 'target';
+  } else {
+    effectState[eff] = null;
+  }
+  buildEffectsGrid();
+}
+
+function updateSummary() {
+  const currentEffs = Object.keys(effectState).filter(k => effectState[k] === 'current');
+  const targetEffs = Object.keys(effectState).filter(k => effectState[k] === 'target');
+  const box = document.getElementById('selectionSummary');
+
+  let html = '';
+  if (currentEffs.length > 0) {
+    html += `<span>Current:</span> ${currentEffs.join(', ')}`;
+  }
+  if (targetEffs.length > 0) {
+    if (html) html += '&nbsp;&nbsp;|&nbsp;&nbsp;';
+    html += `<span>Target${targetEffs.length > 1 ? 's' : ''}:</span> ${targetEffs.map(e => `<span style="color:var(--accent)">${e}</span>`).join(', ')}`;
+  }
+  if (!html) {
+    html = `<span>No effects selected.</span> Tap once = current, tap twice = target.`;
+  }
+  box.innerHTML = html;
+}
+
+function updateComputeBtn() {
+  const targetEffs = Object.keys(effectState).filter(k => effectState[k] === 'target');
+  document.getElementById('computeBtn').disabled = !(selectedDrug && targetEffs.length > 0);
+}
+
+function clearEffects() {
+  effectState = {};
+  buildEffectsGrid();
+  resetRecipePanel();
+}
+
+function selectDrug(drug) {
+  selectedDrug = drug;
+  buildDrugGrid();
+  updateComputeBtn();
+  resetRecipePanel();
+}
+
+function resetRecipePanel() {
+  document.getElementById('recipePanel').innerHTML = `
+    <div class="recipe-empty" id="emptyState">
+      <div class="empty-icon">🧪</div>
+      <div>Select a product and configure<br>your target effect to generate<br>a mixing recipe.</div>
+    </div>
+  `;
+}
+
+function computeRecipe() {
+  if (!selectedDrug) return;
+  const targetEffs = Object.keys(effectState).filter(k => effectState[k] === 'target');
+  if (!targetEffs.length) return;
+
+  const currentEffs = Object.keys(effectState).filter(k => effectState[k] === 'current');
+  const startEffects = [...new Set([...selectedDrug.baseEffects, ...currentEffs])].slice(0, MAX_EFFECTS);
+
+  const result = findRecipe(startEffects, targetEffs, 6);
+  renderRecipe(result, targetEffs, startEffects);
+}
+
+function renderRecipe(result, targetEffects, startEffects) {
+  const panel = document.getElementById('recipePanel');
+  panel.innerHTML = '';
+
+  if (result.found && result.note === 'already_has') {
+    const price = sellPrice(selectedDrug.basePrice, startEffects);
+    panel.innerHTML = `
+      <div class="recipe-card">
+        <div class="recipe-header">
+          <div class="recipe-title">✓ Already Present</div>
+        </div>
+        <div class="recipe-body">
+          <div class="info-box" style="color:var(--accent)">
+            <span>${selectedDrug.name}</span> already has ${targetEffects.map(e => `<span style="color:var(--accent)">${e}</span>`).join(', ')}! No mixing needed.
+          </div>
+          ${valueRowHTML(selectedDrug.basePrice, price, 0, totalMultiplier(startEffects))}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (!result.found) {
+    panel.innerHTML = `
+      <div class="recipe-card">
+        <div class="recipe-header">
+          <div class="recipe-title">⚠ No Path Found</div>
+          <div class="recipe-meta">within 6 steps</div>
+        </div>
+        <div class="recipe-body">
+          <div class="no-path">
+            Could not find a recipe to achieve all ${targetEffects.length > 1 ? `<strong>${targetEffects.length} target effects</strong>` : `<strong>${targetEffects[0]}</strong>`} within 6 steps.<br><br>
+            Try fewer targets, remove some current effects, or try a different starting product.
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const steps = result.steps;
+  const finalEffects = steps.length > 0 ? steps[steps.length - 1].after : startEffects;
+  const totalCost = steps.reduce((s, st) => s + (INGREDIENTS[st.ingredient]?.cost || 0), 0);
+  const targetLabel = targetEffects.length === 1 ? targetEffects[0] : `${targetEffects.length} Effects`;
+  const finalPrice = sellPrice(selectedDrug.basePrice, finalEffects);
+  const profit = finalPrice - totalCost;
+  const finalMult = totalMultiplier(finalEffects);
+
+  // Build step HTML
+  let stepsHTML = `
+    <div class="mix-steps">
+      <div class="mix-step">
+        <div class="step-num">▶</div>
+        <div class="step-content">
+          <div class="step-action">Starting product</div>
+          <div class="step-item">${selectedDrug.icon} ${selectedDrug.name}</div>
+          <div class="effects-transform">
+            ${startEffects.map(e => `<span class="eff-chip unchanged">${effDot(e)}${e}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+  `;
+
+  steps.forEach((st, i) => {
+    const ing = INGREDIENTS[st.ingredient];
+    const changesHTML = buildChangesHTML(st.before, st.after, st.changes);
+    stepsHTML += `
+      <div class="mix-step">
+        <div class="step-num ingredient">${i + 1}</div>
+        <div class="step-content">
+          <div class="step-action">Mix ingredient</div>
+          <div class="step-item">${ing.icon} <span class="ing-name">${st.ingredient}</span></div>
+          <div class="effects-transform">${changesHTML}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  stepsHTML += `</div>`;
+
+  // Final effects with targets highlighted
+  const finalEffHTML = finalEffects.map(e => {
+    const isTarget = targetEffects.includes(e);
+    const col = isTarget ? `color:var(--accent);border-color:var(--accent-dim);background:rgba(57,255,133,0.1)` : `color:var(--text2);border-color:var(--border);background:var(--surface2)`;
+    return `<span class="eff-chip" style="${col}">${effDot(e)}${isTarget ? '★ ' : ''}${e}</span>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div>
+          <div class="recipe-title">✓ Recipe Found — ${targetLabel}</div>
+        </div>
+        <div class="recipe-meta">${steps.length} step${steps.length !== 1 ? 's' : ''} · est. $${totalCost} ingredients</div>
+      </div>
+      <div class="recipe-body">
+        ${valueRowHTML(selectedDrug.basePrice, finalPrice, totalCost, finalMult)}
+        ${stepsHTML}
+        <div class="final-effects">
+          <div class="final-label">Final effect profile</div>
+          <div class="effects-transform">${finalEffHTML}</div>
+        </div>
+        <div class="info-box" style="margin-top:14px">
+          <span>Tip:</span> Mix ingredients in the exact order shown above. Effect transformations apply sequentially — order matters.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function valueRowHTML(basePrice, sell, cost, mult) {
+  const profit = sell - cost;
+  return `
+    <div class="value-row">
+      <div class="value-card">
+        <div class="value-num">$${sell}</div>
+        <div class="value-unit">Sell Price</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num" style="color:${profit >= 0 ? 'var(--accent)' : 'var(--red)'}">$${profit}</div>
+        <div class="value-unit">Profit / Unit</div>
+      </div>
+      <div class="value-card">
+        <div class="value-num" style="color:var(--accent)">${(1 + mult).toFixed(2)}×</div>
+        <div class="value-unit">Multiplier</div>
+      </div>
+    </div>
+  `;
+}
+
+function buildChangesHTML(before, after, changes) {
+  const parts = [];
+
+  changes.filter(c => c.type === 'transform').forEach(c => {
+    parts.push(`<span class="eff-chip before">${c.from}</span><span class="arrow-sym">→</span><span class="eff-chip after">${effDot(c.to)}${c.to}</span>`);
+  });
+
+  changes.filter(c => c.type === 'add').forEach(c => {
+    parts.push(`<span class="eff-chip added">${effDot(c.added)}+ ${c.added}</span>`);
+  });
+
+  const transformed = changes.filter(c => c.type === 'transform').map(c => c.from);
+  before.filter(e => !transformed.includes(e)).forEach(e => {
+    parts.push(`<span class="eff-chip unchanged">${effDot(e)}${e}</span>`);
+  });
+
+  return parts.join('');
+}
+
+// ════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════
+buildDrugGrid();
+buildEffectsGrid();
+</script>
+</body>
+</html>
