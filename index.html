@@ -821,13 +821,13 @@
 // ════════════════════════════════════════
 
 const DRUGS = [
-  { id: "og_kush",    name: "OG Kush",         type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Calming", "Euphoric"] },
-  { id: "sour_diesel",name: "Sour Diesel",     type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Refreshing", "Energizing"] },
+  { id: "og_kush",    name: "OG Kush",         type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Calming"] },
+  { id: "sour_diesel",name: "Sour Diesel",     type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Refreshing"] },
   { id: "green_crack",name: "Green Crack",     type: "Cannabis",   icon: "🌿", basePrice: 35,  baseEffects: ["Energizing"] },
-  { id: "gdp",        name: "Granddaddy Purple",type:"Cannabis",   icon: "🍇", basePrice: 35,  baseEffects: ["Sedating", "Calming"] },
+  { id: "gdp",        name: "Granddaddy Purple",type:"Cannabis",   icon: "🍇", basePrice: 35,  baseEffects: ["Sedating"] },
   { id: "meth",       name: "Methamphetamine", type: "Stimulant",  icon: "💎", basePrice: 70,  baseEffects: [] },
-  { id: "cocaine",    name: "Cocaine",         type: "Stimulant",  icon: "🤍", basePrice: 150, baseEffects: ["Athletic", "Energizing"] },
-  { id: "shrooms",    name: "Shrooms",         type: "Psychedelic",icon: "🍄", basePrice: 75,  baseEffects: [] },
+  { id: "cocaine",    name: "Cocaine",         type: "Stimulant",  icon: "🤍", basePrice: 150, baseEffects: [] },
+  { id: "shrooms",    name: "Shrooms",         type: "Psychedelic",icon: "🍄", basePrice: 65,  baseEffects: [] },
 ];
 
 // Max simultaneous effects on a product (in-game cap).
@@ -837,24 +837,24 @@ const MAX_EFFECTS = 8;
 // Final price = ceil(basePrice * (1 + sumOfMultipliers))
 const EFFECT_MULTIPLIERS = {
   "Anti-Gravity":0.54,"Athletic":0.32,"Balding":0.30,"Bright-Eyed":0.40,
-  "Calming":0.10,"Cyclopean":0.56,"Disorienting":0.00,"Electrifying":0.50,
-  "Energizing":0.22,"Euphoric":0.18,"Focused":0.16,"Foggy":0.36,
-  "Gingeritis":0.20,"Glowing":0.48,"Jenkem":0.16,"Laxative":0.00,
-  "Long Faced":0.52,"Munchies":0.12,"Paranoia":0.00,"Refreshing":0.14,
-  "Schizophrenic":0.00,"Sedating":0.26,"Seizure-Inducing":0.00,"Shrinking":0.60,
-  "Slippery":0.34,"Smelly":0.00,"Sneaky":0.24,"Spicy":0.38,
-  "Thought-Provoking":0.44,"Tingly":0.18,"Toxic":0.00,"Tropic Thunder":0.46,
-  "Zombifying":0.58
+  "Calming":0.10,"Calorie-Dense":0.28,"Cyclopean":0.56,"Disorienting":0.00,
+  "Electrifying":0.50,"Energizing":0.22,"Euphoric":0.18,"Explosive":0.00,
+  "Focused":0.16,"Foggy":0.36,"Gingeritis":0.20,"Glowing":0.48,
+  "Jennerising":0.42,"Laxative":0.00,"Long-Faced":0.52,"Munchies":0.12,
+  "Paranoia":0.00,"Refreshing":0.14,"Schizophrenic":0.00,"Sedating":0.26,
+  "Seizure-Inducing":0.00,"Shrinking":0.60,"Slippery":0.34,"Smelly":0.00,
+  "Sneaky":0.24,"Spicy":0.38,"Thought-Provoking":0.44,"Tingly":0.18,
+  "Toxic":0.00,"Tropic Thunder":0.46,"Zombifying":0.58
 };
 
 // All possible effects in the game
 const ALL_EFFECTS = [
-  "Anti-Gravity","Athletic","Balding","Bright-Eyed","Calming","Cyclopean",
-  "Disorienting","Electrifying","Energizing","Euphoric","Focused","Foggy",
-  "Gingeritis","Glowing","Jenkem","Laxative","Long Faced","Munchies",
-  "Paranoia","Refreshing","Schizophrenic","Sedating","Seizure-Inducing","Shrinking","Slippery",
-  "Smelly","Sneaky","Spicy","Thought-Provoking","Tingly","Toxic",
-  "Tropic Thunder","Zombifying"
+  "Anti-Gravity","Athletic","Balding","Bright-Eyed","Calming","Calorie-Dense",
+  "Cyclopean","Disorienting","Electrifying","Energizing","Euphoric","Explosive",
+  "Focused","Foggy","Gingeritis","Glowing","Jennerising","Laxative","Long-Faced",
+  "Munchies","Paranoia","Refreshing","Schizophrenic","Sedating","Seizure-Inducing",
+  "Shrinking","Slippery","Smelly","Sneaky","Spicy","Thought-Provoking","Tingly",
+  "Toxic","Tropic Thunder","Zombifying"
 ];
 
 // Effect color mapping for visual variety
@@ -864,9 +864,10 @@ const EFFECT_COLORS = {
   "Foggy":"#8b90a0","Disorienting":"#ff4da6","Euphoric":"#ff85d1","Paranoia":"#ff4d4d",
   "Seizure-Inducing":"#ff0040","Shrinking":"#4dffb3","Focused":"#00c8ff","Electrifying":"#ffe135",
   "Athletic":"#3dff85","Slippery":"#66d9ff","Munchies":"#ff9500","Sedating":"#9b7fff",
-  "Long Faced":"#c0a060","Spicy":"#ff4500","Bright-Eyed":"#00ffcc","Tingly":"#ff85ff",
+  "Long-Faced":"#c0a060","Spicy":"#ff4500","Bright-Eyed":"#00ffcc","Tingly":"#ff85ff",
   "Tropic Thunder":"#00ff85","Cyclopean":"#ff6600","Zombifying":"#80c040","Sneaky":"#aaaaaa",
-  "Anti-Gravity":"#c080ff","Laxative":"#c8a040","Jenkem":"#8b7355","Smelly":"#99cc00","Schizophrenic":"#ff40a0"
+  "Anti-Gravity":"#c080ff","Laxative":"#c8a040","Jennerising":"#d4af37","Smelly":"#99cc00","Schizophrenic":"#ff40a0",
+  "Calorie-Dense":"#ffb347","Explosive":"#ff3300"
 };
 
 // ════════════════════════════════════════
@@ -919,8 +920,9 @@ const INGREDIENTS = {
   },
   "Donut": {
     icon: "🍩", cost: 3,
-    baseEffect: "Calming",
+    baseEffect: "Calorie-Dense",
     transforms: {
+      "Calorie-Dense":"Explosive",
       "Energizing":  "Balding",
       "Balding":     "Sneaky",
       "Gingeritis":  "Calming",
@@ -949,7 +951,7 @@ const INGREDIENTS = {
     baseEffect: "Balding",
     transforms: {
       "Calming":     "Anti-Gravity",
-      "Focused":     "Jenkem",
+      "Focused":     "Jennerising",
       "Energizing":  "Thought-Provoking",
       "Toxic":       "Sneaky"
     }
@@ -969,10 +971,10 @@ const INGREDIENTS = {
     icon: "🍌", cost: 2,
     baseEffect: "Gingeritis",
     transforms: {
-      "Paranoia":    "Jenkem",
+      "Paranoia":    "Jennerising",
       "Energizing":  "Thought-Provoking",
       "Toxic":       "Smelly",
-      "Long Faced":  "Refreshing",
+      "Long-Faced":  "Refreshing",
       "Cyclopean":   "Thought-Provoking",
       "Disorienting":"Focused",
       "Smelly":      "Anti-Gravity"
@@ -992,7 +994,7 @@ const INGREDIENTS = {
   },
   "Iodine": {
     icon: "🧪", cost: 8,
-    baseEffect: "Jenkem",
+    baseEffect: "Jennerising",
     transforms: {
       "Calming":     "Balding",
       "Focused":     "Seizure-Inducing",
@@ -1026,7 +1028,7 @@ const INGREDIENTS = {
   },
   "Horse Semen": {
     icon: "🐴", cost: 9,
-    baseEffect: "Long Faced",
+    baseEffect: "Long-Faced",
     transforms: {
       "Anti-Gravity":"Calming",
       "Gingeritis":  "Refreshing",

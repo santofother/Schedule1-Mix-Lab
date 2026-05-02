@@ -1,7 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node *)"
+      "Bash(node *)",
+      "WebSearch",
+      "WebFetch(domain:schedule-1.fandom.com)",
+      "WebFetch(domain:steamcommunity.com)",
+      "WebFetch(domain:www.gamespot.com)",
+      "WebFetch(domain:gamerant.com)",
+      "WebFetch(domain:www.sportskeeda.com)",
+      "WebFetch(domain:techsngames.com)",
+      "WebFetch(domain:bo3.gg)",
+      "Bash(gh api *)",
+      "Bash(gh auth *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:harleiquill.github.io)",
+      "WebFetch(domain:www.pcgamesn.com)"
     ]
   }
 }
